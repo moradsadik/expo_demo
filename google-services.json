@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "578320742830",
+    "firebase_url": "https://wis-events-notification.firebaseio.com",
+    "project_id": "wis-events-notification",
+    "storage_bucket": "wis-events-notification.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578320742830:android:2c928e1329187aa58ff03f",
+        "android_client_info": {
+          "package_name": "wis.events.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578320742830-qadn6n29v4d7porhp09j07n60ovtgs8r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvFDKSgg6c9v2roJyNxxR0RI2wXHomymM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578320742830-qadn6n29v4d7porhp09j07n60ovtgs8r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
