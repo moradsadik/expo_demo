@@ -1,14 +1,12 @@
 import React, {Component,PureComponent} from 'react';
-import {ButtonGroup, Header, Icon, Avatar } from 'react-native-elements';
-import { Text, View, FlatList,ActivityIndicator, TouchableOpacity   } from 'react-native';
+import {ButtonGroup, Header, Icon, Avatar, SocialIcon  } from 'react-native-elements';
+import { Text, View, FlatList,ActivityIndicator, TouchableOpacity , ScrollView  } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator  } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
-import { ScrollView } from 'react-native-gesture-handler';
 import  MapView, { Marker }  from 'react-native-maps'; 
-import { Notifications } from 'expo';
-import * as Permissions from 'expo-permissions';
 import moment from 'moment';
+import Accordian from './accordion'
 
 class Events extends PureComponent {
   constructor(props){
@@ -198,33 +196,89 @@ class EventDetaille extends PureComponent{
   }
 }
 
-class Artists extends PureComponent{
-  
-    constructor(props){
-      super(props);
+const  Artists =  ()=>{
+  return (<View> <TopBar  title="Artist " /></View>);
+}
+const  FAQ =  ()=>{
+  const list = [
+    { 
+      id : 1,
+      title: 'Non Veg Biryanis', 
+      data: 'Biryani also known as biriyani, biriani, birani or briyani, is a mixed rice dish with its origins among the Muslims of the Indian subcontinent. This dish is especially popular throughout the Indian subcontinent, as well as among the diaspora from the region. It is also prepared in other regions such as Iraqi Kurdistan.',
+    },
+    { 
+      id : 2,
+      title: 'Pizzas',
+      data: 'Pizza is a savory dish of Italian origin, consisting of a usually round, flattened base of leavened wheat-based dough topped with tomatoes, cheese, and various other ingredients (anchovies, olives, meat, etc.) baked at a high temperature, traditionally in a wood-fired oven. In formal settings, like a restaurant, pizza is eaten with knife and fork, but in casual settings it is cut into wedges to be eaten while held in the hand. Small pizzas are sometimes called pizzettas.'
+    },
+    { 
+      id : 3,
+      title: 'Drinks',
+     data: 'A drink (or beverage) is a liquid intended for human consumption. In addition to their basic function of satisfying thirst, drinks play important roles in human culture. Common types of drinks include plain drinking water, milk, coffee, tea, hot chocolate, juice and soft drinks. In addition, alcoholic drinks such as wine, beer, and liquor, which contain the drug ethanol, have been part of human culture for more than 8,000 years.'
+    },
+    { 
+      id : 4,
+      title: 'Deserts',
+      data: 'A dessert is typically the sweet course that concludes a meal in the culture of many countries, particularly Western culture. The course usually consists of sweet foods, but may include other items. The word "dessert" originated from the French word desservir "to clear the table" and the negative of the Latin word servire'
+    },
+    { 
+      id : 5,
+      title: 'Fruits',
+      data: 'A dessert is typically the sweet course that concludes a meal in the culture of many countries, particularly Western culture. The course usually consists of sweet foods, but may include other items. The word "dessert" originated from the French word desservir "to clear the table" and the negative of the Latin word servire'
+    },
+    { 
+      id : 6,
+      title: 'Voiture',
+      data: 'A dessert is typically the sweet course that concludes a meal in the culture of many countries, particularly Western culture. The course usually consists of sweet foods, but may include other items. The word "dessert" originated from the French word desservir "to clear the table" and the negative of the Latin word servire'
+    },
+    { 
+      id : 7,
+      title: 'Paiemant',
+      data: 'A dessert is typically the sweet course that concludes a meal in the culture of many countries, particularly Western culture. The course usually consists of sweet foods, but may include other items. The word "dessert" originated from the French word desservir "to clear the table" and the negative of the Latin word servire'
+    },
+  ];
+
+  const items = [];
+    for (item of list) {
+        items.push(
+            <Accordian
+                key = {item.id} 
+                title = {item.title}
+                data = {item.data}
+            />
+        );
     }
+  return (<ScrollView>
+    <View>
+      <TopBar  title="FAQ" />  
+      <View style={{ marginHorizontal: 10}}>
+        <Text style={{marginBottom:5, fontSize:14}}>Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression. Le Lorem Ipsum est le faux texte standard de l'imprimerie depuis les années 1500, quand un imprimeur anonyme assembla ensemble des morceaux de texte pour réaliser</Text>
+        {items}
+        </View>
+    </View>
+  </ScrollView>);
+}
+const  Information =  ()=>{
+  return <View>
 
-    componentDidMount(){
-    const { status } = Permissions.askAsync(Permissions.NOTIFICATIONS);
-    // if (status !== 'granted') {
-    //   alert('No notification permissions!');
-    //   return;
-    // }
-    let token = Notifications.getExpoPushTokenAsync();
-    console.log(token)
-  }
+    <TopBar title = "Information" />
+    <SocialIcon title='Facebook' button type='facebook' />
+    <SocialIcon title='Youtube' button type='youtube' />
+    <SocialIcon title='Twitter' button type='twitter' />
+    <SocialIcon title='Instagram' button type='instagram' />
+  </View>;
+  
+}
 
-
-  render = () => {
-    return (<View><Text>Artists</Text></View>);
-  }
-
-
+const TopBar = (props) =>{
+  return <View style={{backgroundColor:'#7bdfa0',  height:50, justifyContent: "center", alignItems:"center", marginBottom:5}} >
+    <Text style={{fontSize: 19, color: '#fff', fontWeight: 'bold'}} > {props.title} </Text>
+  </View>;
 }
 
 
 
-// Configuration Tabs et Main View
+
 const eventStack = createStackNavigator({
   Events: {
     screen: Events,
@@ -233,26 +287,11 @@ const eventStack = createStackNavigator({
       headerStyle: {
         backgroundColor: '#7bdfa0',
         height: 50,
+        borderBottomWidth: 2,
+        borderBottomColor: '#7bdfa0'
       },
-      header: ({ scene, previous, navigation }) => {
-        const { options } = scene.descriptor;
-        const title =
-          options.headerTitle !== undefined
-            ? options.headerTitle
-            : options.title !== undefined
-            ? options.title
-            : scene.route.routeName;
-      
-        return (
-          <Header
-              centerComponent={{ text: title, style: { color: '#fff', fontWeight: 'bold', fontSize:18 } }}
-              containerStyle={{
-                backgroundColor: '#5fd2a1',
-                justifyContent: 'space-around',
-              }}
-            />
-        );
-      } 
+      headerTintColor :'#fff' ,
+      headerTitleAlign : 'center'
     }),
   },
   EventDetaille : {
@@ -261,35 +300,17 @@ const eventStack = createStackNavigator({
       title: 'Evenements '+navigation.getParam('title'),
       headerStyle: {
         backgroundColor: '#7bdfa0',
-        height: 50,
+        height: 50
       },
-      header: ({ scene, previous, navigation }) => {
-        const { options } = scene.descriptor;
-        const title =
-          options.headerTitle !== undefined
-            ? options.headerTitle
-            : options.title !== undefined
-            ? options.title
-            : scene.route.routeName;
-      
-        return (
-          <Header
-              leftComponent={<LeftNavigation navigation = {navigation} />}
-              centerComponent={{ text: title, style: { color: '#fff', fontWeight: 'bold', fontSize:18 } }}
-              containerStyle={{
-                backgroundColor: '#5fd2a1',
-                justifyContent: 'space-around',
-              }}
-            />
-        );
-      } 
+      headerTintColor :'#fff' 
     }),
   }
 });
 
 const AppNavigator = createBottomTabNavigator({
       Events: eventStack,
-      Artists : Artists
+      Information : Information,
+      FAQ : FAQ
   },{
       initialRouteName : 'Events',
       tabBarOptions: {
@@ -309,18 +330,6 @@ const AppNavigator = createBottomTabNavigator({
 
 const AppContainer = createAppContainer(AppNavigator);
 export default class App extends Component {
-  state = {
-    notification: {},
-  };
-
-  componentDidMount() {
-    this._notificationSubscription = Notifications.addListener(this._handleNotification);
-  }
-
-  _handleNotification = notification => {
-    this.setState({ notification: notification });
-  };
-
   render() {
     return (
       <View style={{flex: 1}}>
