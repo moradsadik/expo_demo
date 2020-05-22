@@ -1,6 +1,6 @@
 import React, {Component,PureComponent} from 'react';
 import {ButtonGroup, Header, Icon, Avatar, SocialIcon, Rating  } from 'react-native-elements';
-import { Image, Text, View, FlatList,ActivityIndicator, TouchableOpacity , ScrollView, Dimensions,SafeAreaView  } from 'react-native';
+import { Image, Text, View, FlatList,ActivityIndicator, TouchableOpacity , ScrollView, Dimensions,SafeAreaView, ImageBackground  } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator  } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
@@ -144,14 +144,17 @@ class EventDetaille extends PureComponent{
     return (
         <View style={{flex:1, backgroundColor: '#fff'}}>
             <ScrollView>
-  
-                <View style={{ alignItems : 'center'}}>
-                  <Avatar size="xlarge" containerStyle = {{borderWidth : 3, borderColor : '#ccc', marginBottom:5}} source={{ uri:'https://randomuser.me/api/portraits/men/'+post.id+'.jpg'}} rounded />
-                  <Text style = {{fontSize : 18, textAlign: 'justify', marginBottom : 10}}>Bridget Anderson</Text>
-                </View>
+                <ImageBackground style={{position:'relative',flex: 1, resizeMode: "cover", justifyContent: "center", minHeight:200}} 
+                                 source = {require('./assets/images/event.jpg')}>
+                    <View style={{position:'absolute', top:145, right:15, zIndex:999}}>
+                      <Avatar size="xlarge" containerStyle = {{width: 90, height:90, borderWidth : 5, borderColor : '#fff', marginBottom:5}} source={{ uri:'https://randomuser.me/api/portraits/men/'+post.id+'.jpg'}} rounded />
+                    </View>
+                </ImageBackground>
   
                 <View style={{ paddingHorizontal : 20, paddingVertical : 10}}>
                   
+                  <Text style = {{fontSize : 18, fontWeight : 'bold',color:'#3a506b', textAlign: 'justify', marginBottom : 10}}>Bridget Anderson</Text>
+
                   <Text style = {{marginBottom : 10, fontSize:17, fontWeight : 'bold', textTransform : 'capitalize'}}>{post.title}</Text>
   
                   <View style={{padding : 25, borderColor:'#bcacaf', borderWidth:2, marginTop : 10, flexDirection : 'row'}} >
@@ -280,12 +283,6 @@ const TopBar = (props) =>{
 
 class  Home extends PureComponent {
 
-  static navigationOptions = {
-    drawerLabel: 'Places',
-    drawerIcon: ({ tintColor }) => (
-        <Icon  name='map-marker' type="font-awesome"  color = {tintColor}/>
-    )
-  }
   constructor(props){
     super(props)
     this.state = {
@@ -469,14 +466,16 @@ class  Home extends PureComponent {
 
 const DrawerContent = (props) => {
   return <ScrollView>
-      <SafeAreaView style={{flex:1}} forceInset={{ top: 'always', horizontal: 'never' }} >
-        <View style={{ flex : 1,justifyContent : 'center', alignItems : 'center', padding: 10, marginBottom: 10, borderBottomColor: '#ccc', borderBottomWidth:1}}>
+      <View style={{flex:1}} >
+        <View style={{ flex : 1,justifyContent : 'center', alignItems : 'center', backgroundColor : '#95d5b2',
+                      padding: 10, borderBottomColor: '#52b788', borderBottomWidth:1}}>
              <Avatar rounded size="xlarge"
                containerStyle={{}}
                source={{uri:'https://randomuser.me/api/portraits/men/75.jpg' }} />
+             <Text style={{fontSize:15, fontWeight: 'bold'}}>John Doe</Text>  
         </View>
         <DrawerItems {...props} />
-      </SafeAreaView>
+      </View>
     </ScrollView>
 }
 
@@ -505,12 +504,8 @@ const eventStack = createStackNavigator({
   EventDetaille : {
     screen : EventDetaille,
     navigationOptions: ({ navigation }) => ({
-      title: 'Evenements '+navigation.getParam('title'),
-      headerStyle: {
-        backgroundColor: '#7bdfa0',
-        height: 80
-      },
-      headerTintColor :'#fff' 
+      headerMode : 'none',
+      headerShown : false
     }),
   }
 });
@@ -537,12 +532,31 @@ const AppNavigator = createBottomTabNavigator({
 );
 
 const drawernavigation = createDrawerNavigator({
-  Home : Home,
-  'Application' : AppNavigator,
+  'Application' : {
+    screen: AppNavigator,
+    navigationOptions : {
+      drawerLabel: 'Application',
+      drawerIcon: ({ tintColor }) => (
+          <Icon  name='bars' type="font-awesome"  color = {tintColor}/>
+      )
+    }
+  },
+  Home : {
+    screen : Home,
+    navigationOptions : {
+      drawerLabel: 'Places',
+      drawerIcon: ({ tintColor }) => (
+          <Icon  name='map-marker' type="font-awesome"  color = {tintColor}/>
+      )
+    }
+  },
 }, {
   contentComponent  : DrawerContent,
+  drawerWidth : Dimensions.get('window').width * 0.85,
+  hideStatusBar : true,
   contentOptions  : {
-    activeTintColor  : 'orange',
+    activeTintColor  : '#f8961e',
+    activeBackgroundColor : '#fff',
     labelStyle : {fontWeight : 'bold'},
     iconContainerStyle : {padding : 0}
   }
