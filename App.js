@@ -153,7 +153,7 @@ class EventDetaille extends PureComponent{
   
                 <View style={{ paddingHorizontal : 20, paddingVertical : 10}}>
                   
-                  <Text style = {{fontSize : 18, fontWeight : 'bold',color:'#3a506b', textAlign: 'justify', marginBottom : 10}}>Bridget Anderson</Text>
+                  <Text style = {{fontSize : 20, fontWeight : 'bold',color:'#283d3b', textAlign: 'justify', marginBottom : 10}}>Bridget Anderson</Text>
 
                   <Text style = {{marginBottom : 10, fontSize:17, fontWeight : 'bold', textTransform : 'capitalize'}}>{post.title}</Text>
   
