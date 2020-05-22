@@ -1,12 +1,14 @@
 import React, {Component,PureComponent} from 'react';
-import {ButtonGroup, Header, Icon, Avatar, SocialIcon  } from 'react-native-elements';
-import { Text, View, FlatList,ActivityIndicator, TouchableOpacity , ScrollView  } from 'react-native';
+import {ButtonGroup, Header, Icon, Avatar, SocialIcon, Rating  } from 'react-native-elements';
+import { Image, Text, View, FlatList,ActivityIndicator, TouchableOpacity , ScrollView, Dimensions,SafeAreaView  } from 'react-native';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator  } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import  MapView, { Marker }  from 'react-native-maps'; 
 import moment from 'moment';
 import Accordian from './accordion'
+//import SafeAreaView from 'react-native-safe-area-view';
+import { createDrawerNavigator, DrawerItems } from 'react-navigation-drawer';
 
 class Events extends PureComponent {
   constructor(props){
@@ -68,9 +70,9 @@ class EventItem extends PureComponent{
   constructor(props){super(props)}
 
   render = () => {
-    const {item} = this.props;
+    const {item, navigation} = this.props;
     return (
-        <TouchableOpacity  onPress = {() => this.props.navigation.navigate('EventDetaille', {id : item.id, title : 'Math Kendy'})}>
+        <TouchableOpacity  onPress = {() => navigation.navigate('EventDetaille', {id : item.id, title : 'Math Kendy'})}>
         <View style={{flex:1, flexDirection : 'row', marginVertical:10,minHeight: 250, marginHorizontal: 10, borderColor : '#dbdbdb', borderWidth : 1}} >
             <View style={{flex:1,justifyContent:'center', alignItems:'center', backgroundColor:'#ededed', paddingHorizontal : 8}}>
               <Text style={{fontSize:35,marginBottom : 2}}>{moment(new Date()).format("DD")} </Text>
@@ -271,13 +273,212 @@ const  Information =  ()=>{
 }
 
 const TopBar = (props) =>{
-  return <View style={{backgroundColor:'#7bdfa0',  height:50, justifyContent: "center", alignItems:"center", marginBottom:5}} >
+  return <View style={{backgroundColor:'#7bdfa0',  height:80, justifyContent: "center", alignItems:"center", marginBottom:5}} >
     <Text style={{fontSize: 19, color: '#fff', fontWeight: 'bold'}} > {props.title} </Text>
   </View>;
 }
 
+class  Home extends PureComponent {
 
+  static navigationOptions = {
+    drawerLabel: 'Places',
+    drawerIcon: ({ tintColor }) => (
+        <Icon  name='map-marker' type="font-awesome"  color = {tintColor}/>
+    )
+  }
+  constructor(props){
+    super(props)
+    this.state = {
+      showMenu : false,
+      places : [
+          {name:'place 1', photos : ['https://loremflickr.com/320/240/coffee','https://loremflickr.com/320/240/nespresso','https://loremflickr.com/320/240/cappuccino'], rating:4, categorie:'coffee', latitude: 48.891015,longitude:2.352073},
+          {name:'place 2', rating:3, categorie:'carburants', latitude:48.881060,longitude:2.362073},
+          {name:'place 3', rating:4, categorie:'hotels', latitude: 48.871090,longitude: 2.372073},
+          {name:'place 4', rating:4, categorie:'restaurants', latitude: 48.861030,longitude: 2.382073},
+          {name:'place 5', rating:3, categorie:'parkings', latitude: 48.891070,longitude: 2.392073},
+          {name:'place 6', rating:3, categorie:'hospitals', latitude: 48.901082,longitude: 2.402073}
+      ],
+      filtred : [],
+      categories : [
+            {name : 'coffee', icon:'coffee', color:''}, 
+            {name : 'carburants', icon:'shopping-basket', color:''}, 
+            {name : 'hotels', icon:'hotel', color:''}, 
+            {name : 'restaurants', icon:'cutlery', color:''}, 
+            {name : 'parkings', icon:'car', color:''}, 
+            {name : 'hospitals', icon:'hospital-o', color:''}, 
+            {name : 'all', icon:'bars', color:''}
+      ]
+    }
+  }
 
+  componentDidMount(){
+    this.setState({filtred : [...this.state.places]})
+  }
+
+  show = (categorie) => {
+      let places = [...this.state.places]
+      let filtred = places
+      if(categorie !== 'all'){
+         filtred = places.filter(p => p.categorie === categorie);
+      }  
+      
+      this.setState({filtred, showMenu: true});
+     
+  }
+
+  navigateToPlace = (place) => {
+    console.log(place)
+    this._map.animateToRegion({
+        latitude: place.latitude,
+        longitude: place.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    })
+  }
+
+  render = ()=>{
+
+    const {categories, showMenu, filtred} = this.state
+    const {width, height} = Dimensions.get('window');
+
+    return <View style={{flex:1}}>
+      
+
+     <MapView ref = {(map) => this._map = map}  style={{flex:1}}
+                showsUserLocation
+                loadingEnabled
+                initialRegion={{
+                  latitude: 48.871090,
+                  longitude: 2.372073,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              >
+          {
+            this.state.filtred.map((p,i) => {
+              return <Marker key={i}
+                  coordinate={{latitude: p.latitude,longitude:p.longitude}}
+                  title={p.name}
+              />
+            })
+          }
+      </MapView>
+      
+      <View style={{position:'absolute', width:width, height:50,
+                     top:38, left: 5, flexDirection: 'row'}}>
+
+          <FlatList
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={categories}
+            renderItem={({ item }) => 
+              <TouchableOpacity onPress = {() => this.show(item.name)}>
+                <View  style={{borderColor:'#ccc', borderWidth: 0,borderWidth:1,
+                                      borderColor: '#aaa', backgroundColor: '#fff', 
+                                      marginHorizontal:3, borderRadius:100, width: 'auto', 
+                                      padding:7, height:38, flexDirection: 'row'}}>
+                                              
+                  <Icon  name={item.icon} type='font-awesome' containerStyle={{marginHorizontal:5, paddingVertical: 4}} iconStyle={{fontSize: 14, fontWeight:'normal'}}/>
+                  <Text style={{textTransform:'capitalize', textAlignVertical:'center' ,fontWeight: 'bold', textAlign: 'center', color: '#000', 
+                                fontWeight: 'normal'}}> {item.name} </Text>
+                </View>
+              </TouchableOpacity>
+            }
+            keyExtractor={(item, index) => index+''}
+          />
+      </View>
+      { showMenu &&
+      <View style={{position:'absolute', bottom:0, left:0, width:width, maxHeight:height/2, backgroundColor: '#e5e5e5',
+                    borderColor:'#ccc', borderTopWidth:1, flexDirection:'column'}}>
+          <TouchableOpacity onPress = {() => this.setState({showMenu : !showMenu})}>
+            <View style={{flex:1,alignItems:'center', justifyContent:'center'}}>
+              <Icon name="caret-down" type="font-awesome" 
+                    containerStyle={{padding:0, margin:0, marginTop:-9}} />
+            </View>
+          </TouchableOpacity>            
+          <FlatList 
+              data = {filtred} 
+              keyExtractor={(item, index) => index+''}
+              renderItem ={({ item }) =>  
+                  <TouchableOpacity onPress = {() => this.navigateToPlace(item)}>
+                    <View style={{ backgroundColor : '#fff', paddingLeft:18, paddingVertical:13, marginVertical:3,
+                                  borderColor:'#ccc',borderTopWidth:1, borderBottomWidth:1}}>
+                      {
+                        item.photos &&
+                        <FlatList style ={{marginVertical : 5}} data = {item.photos} horizontal showsHorizontalScrollIndicator = {false}
+                                  keyExtractor = {(item, index) => index+''}
+                                  renderItem = { ({item}) =>
+                                      <Image
+                                      source={{ uri: item }}
+                                      style={{ marginRight:5, width:250, height:150, borderRadius : 10 }}
+                                      />
+                                    }  
+                          />
+                      }
+                      <Text style={{fontSize:19, textTransform: 'capitalize'}}>{item.name}</Text>
+                      <View style={{flex:1, flexDirection:'row', marginVertical:3}}>
+                        <Text style={{color : '#22223b'}}>{item.rating},0</Text> 
+                        <Rating defaultRating = {4} count={5} ratingCount = {5} imageSize={15}  style={{padding:0, marginHorizontal:12}}  />
+                      </View>
+                      <View style={{flex:1, flexDirection:'row'}}>
+                        <Text style={{color : '#22223b'}}>{item.categorie}</Text>
+                        <Text style={{color : '#4a4e69'}}> - </Text>
+                        <Text style={{color : '#4a4e69'}}>129 boulevard Oued Sebou</Text>
+                      </View>
+                      <View style={{flex:1, flexDirection:'row'}}>
+                        <Text style={{color : '#22223b'}}>Ouvert</Text>
+                        <Text style={{color : '#4a4e69'}}> . </Text>
+                        <Text style={{color : '#4a4e69'}}>Ferme à 23:30</Text>
+                      </View>
+                    </View> 
+                  </TouchableOpacity>
+              } />
+      </View>
+      }
+
+      {/* <View style={{ position:'absolute', width:'auto', height:'auto', bottom:30, left:5 }}>
+        <Icon reverse name={showMenu ? 'times' : 'bars'} type='font-awesome'  
+                      color='#63b7af'
+                      onPress = {() => {this.setState({showMenu : !showMenu})}} />
+      </View> 
+      <View style={{ borderRadius:10,opacity:0.9, borderWidth:1,borderColor: '#ccc', 
+                    position:'absolute',height:'auto', bottom:10, left:20,padding: 10, 
+                    backgroundColor : '#fff',width : Dimensions.get('window').width -40}}>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
+                    <Icon reverse name='coffee' type='font-awesome'  color='#0077b6'
+                      onPress = {() => this.show('coffee')} />
+                    <Icon reverse name='hotel' type='font-awesome' color='#e71d36'  
+                     onPress = {() => this.show('hotel')} />
+                    <Icon reverse name='shopping-basket' type='font-awesome' color='#ffbe0b' 
+                     onPress = {() => this.show('shop')} />
+            </View>
+            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
+                    <Icon reverse name='hospital-o' type='font-awesome'  color='#fb5607'
+                     onPress = {() => this.show('hospital')} />
+                    <Icon reverse name='car' type='font-awesome' color='#ff006e' 
+                     onPress = {() => this.show('bus')} />
+                    <Icon reverse name='ellipsis-h' type='font-awesome' color='#8338ec' 
+                     onPress = {() => this.show('all')} />
+            </View>
+      </View>
+      */}
+
+    </View>
+  }
+}
+
+const DrawerContent = (props) => {
+  return <ScrollView>
+      <SafeAreaView style={{flex:1}} forceInset={{ top: 'always', horizontal: 'never' }} >
+        <View style={{ flex : 1,justifyContent : 'center', alignItems : 'center', padding: 10, marginBottom: 10, borderBottomColor: '#ccc', borderBottomWidth:1}}>
+             <Avatar rounded size="xlarge"
+               containerStyle={{}}
+               source={{uri:'https://randomuser.me/api/portraits/men/75.jpg' }} />
+        </View>
+        <DrawerItems {...props} />
+      </SafeAreaView>
+    </ScrollView>
+}
 
 const eventStack = createStackNavigator({
   Events: {
@@ -286,12 +487,19 @@ const eventStack = createStackNavigator({
       title: 'Evenements',
       headerStyle: {
         backgroundColor: '#7bdfa0',
-        height: 50,
+        height: 80,
         borderBottomWidth: 2,
         borderBottomColor: '#7bdfa0'
       },
       headerTintColor :'#fff' ,
-      headerTitleAlign : 'center'
+      headerTitleAlign : 'center',
+      headerRight: () => (
+        <Icon
+          onPress={() => navigation.openDrawer()}
+          name="bars" type="font-awesome" containerStyle = {{marginHorizontal: 15}}
+          color="#fff"
+        />
+      ),
     }),
   },
   EventDetaille : {
@@ -300,7 +508,7 @@ const eventStack = createStackNavigator({
       title: 'Evenements '+navigation.getParam('title'),
       headerStyle: {
         backgroundColor: '#7bdfa0',
-        height: 50
+        height: 80
       },
       headerTintColor :'#fff' 
     }),
@@ -328,7 +536,19 @@ const AppNavigator = createBottomTabNavigator({
   }
 );
 
-const AppContainer = createAppContainer(AppNavigator);
+const drawernavigation = createDrawerNavigator({
+  Home : Home,
+  'Application' : AppNavigator,
+}, {
+  contentComponent  : DrawerContent,
+  contentOptions  : {
+    activeTintColor  : 'orange',
+    labelStyle : {fontWeight : 'bold'},
+    iconContainerStyle : {padding : 0}
+  }
+})
+
+const AppContainer = createAppContainer(drawernavigation);
 export default class App extends Component {
   render() {
     return (
