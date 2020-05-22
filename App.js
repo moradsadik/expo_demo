@@ -151,28 +151,29 @@ class EventDetaille extends PureComponent{
                     </View>
                 </ImageBackground>
   
-                <View style={{ paddingHorizontal : 20, paddingVertical : 10}}>
+                <View style={{ paddingHorizontal : 10, paddingVertical : 10}}>
                   
                   <Text style = {{fontSize : 20, fontWeight : 'bold',color:'#283d3b', textAlign: 'justify', marginBottom : 10}}>Bridget Anderson</Text>
 
-                  <Text style = {{marginBottom : 10, fontSize:17, fontWeight : 'bold', textTransform : 'capitalize'}}>{post.title}</Text>
-  
-                  <View style={{padding : 25, borderColor:'#bcacaf', borderWidth:2, marginTop : 10, flexDirection : 'row'}} >
+                  <Text style = {{fontSize:17, fontWeight : 'bold', textTransform : 'capitalize'}}>{post.title}</Text>
+                </View>
+                <View>
+                  <View style={{padding : 25, borderColor:'#bcacaf',backgroundColor:'#f9dbbd', marginTop : 10, 
+                               flexDirection : 'row'}} >
                     <Icon color='#bcacaf' name='clock-o' type='font-awesome'/>
                     <Text style={{fontSize : 18, marginLeft : 20}}>Commence à 17 : 20</Text>
                   </View>
   
-                  <View style={{marginVertical: 10,  padding : 10, borderColor:'#bcacaf', borderWidth:2}}>
-                <Text style = {{fontSize : 17,marginBottom : 10 }}>{post.body}</Text>
+                  <View style={{marginVertical: 10,  padding : 12, textAlign: 'justify'}}>
+                      <Text style = {{fontSize : 17,marginBottom : 10 }}>{post.body}</Text>
                   </View>
   
-                  <View style = {{flexDirection : 'row', padding : 25, borderColor:'#bcacaf', borderWidth:2}}>
+                  <View style = {{flexDirection : 'row',paddingHorizontal: 25, paddingVertical : 15, 
+                                  borderColor:'#bcacaf', borderTopWidth:1, borderBottomWidth : 0}}>
                       <Icon color='#bcacaf' name='map-marker' type='font-awesome'/>
                       <Text style = {{fontSize : 16, marginLeft : 20}}>Scene 35 : Marie Lux</Text>
-                     
                   </View>
-
-                  <View style={{flex:1,marginTop:10, borderColor:'#bcacaf', borderWidth:1}}>
+                  <View style={{flex:1}}>
                     <MapView style={{height:350}}
                             showsUserLocation
                             loadingEnabled
