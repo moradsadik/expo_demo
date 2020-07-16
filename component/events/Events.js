@@ -1,44 +1,72 @@
 import React, {PureComponent} from "react";
 import moment from "moment";
-import {ActivityIndicator, AsyncStorage, FlatList, View} from "react-native";
+import {ActivityIndicator, AsyncStorage, FlatList, View, Text} from "react-native";
 import {ButtonGroup} from "react-native-elements";
 import EventItem from "./EventItem";
 import {SafeAreaView} from "react-navigation";
+import axios from "axios";
+
+const API = 'https://event.sadiksoumia.com/api/';
+const CATEGORIES = `${API}categories`;
+const JOUR1 = 'jour-1';
+
+
+const http = axios.create({
+    headers: {'Accept': 'application/json'}
+});
 
 export default class Events extends PureComponent {
     constructor(props) {
-        moment.locale('fr');
+        //moment.locale('fr');
         super(props);
-        this.state = { posts: [], DaysIndex: 0, loading: true }
+        this.state = { 
+            data : [],
+            events: [], 
+            categories : [],
+            DaysIndex: 0, 
+            loading: true 
+        }
     }
 
     componentDidMount() {
-        fetch('https://jsonplaceholder.typicode.com/posts')
-            .then(response => response.json())
-            .then(json => {
-                this.setState({ posts: json, loading: false })
-            })
+        http.get(CATEGORIES)
+             .then( response =>{
+                 let data = response.data;
+                 let categories = data.map( c => { return  { id : c.id, name : c.name} });
+                 let jour1 = data.find(d => d.slug === JOUR1);
+                 let events = jour1.events;
+
+                this.setState({ categories, events, loading: false });
+             })
+             .catch( error => { console.log(error) })
     }
 
     updateDaysIndex = (selectedIndex) => {
         this.setState({ DaysIndex: selectedIndex, loading: true });
-        fetch('https://jsonplaceholder.typicode.com/posts?userId=' + (selectedIndex + 3))
-            .then(response => response.json())
-            .then(json => {
-                this.setState({ posts: json, loading: false })
-            })
+        let id = this.state.categories[selectedIndex].id
+
+        http.get(CATEGORIES + '/'+ id)
+            .then(response => {
+                let events = response.data.events;
+                this.setState({ events, loading: false })
+             })
+            .catch(error => { console.log(error) })
+    }
+
+    categories = () => {
+        return 
     }
 
     render = () => {
-        const { posts, loading } = this.state;
+        const { categories, events,  loading, DaysIndex } = this.state;
         return (
             <View style={{ flex: 1, backgroundColor: '#fff' }}>
                 <ButtonGroup
                     onPress={this.updateDaysIndex}
-                    selectedIndex={this.state.DaysIndex}
-                    buttons={['Jour 1', 'Jour 2', 'Jour 3']}
+                    selectedIndex={DaysIndex}
+                    buttons={categories.map( c => c.name)}
                     selectedButtonStyle={{ backgroundColor: '#7bdfa0' }}
-                    selectedTextStyle={{ fontWeight: 'bold', fontSize: 16 }}
+                    selectedTextStyle={{ textTransform : 'capitalize', fontWeight: 'bold', fontSize: 16 }}
                 />
 
                 {
@@ -48,9 +76,9 @@ export default class Events extends PureComponent {
                         </View>
                         :
                         <FlatList
-                            data={posts}
-                            keyExtractor={(item) => item.id + ''}
-                            renderItem={({ item }) => <EventItem item={item} {...this.props} />} />
+                            data={events}
+                            keyExtractor={(item, index) => index+ ''}
+                            renderItem={({ item }) => <EventItem item={item} {...this.props} />} /> 
                 }
 
 

@@ -1,16 +1,20 @@
 import React, {Component} from "react";
 import {AsyncStorage, View} from "react-native";
 
+const TOKEN = "token";
 export default class Logout extends Component{
 
     constructor(){super()}
-    async componentDidMount() {
-        let token = await AsyncStorage.getItem("token");
-    }
 
-    render(){
+    async componentDidMount() {
         const {navigation} = this.props;
 
-        return <View>    </View>
+        await AsyncStorage.removeItem(TOKEN);
+        navigation.navigate('Redirection')
+
+    }
+
+    render = () => {
+        return <View></View>
     }
 }

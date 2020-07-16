@@ -1,11 +1,16 @@
+import React from "react";
 import {createDrawerNavigator, DrawerItems} from "react-navigation-drawer";
 import {Avatar, Icon} from "react-native-elements";
+import {Dimensions, ScrollView, Text, View, Button, AsyncStorage} from "react-native";
+import eventStack from "./EventsStack";
+import Partner from "../component/Partner";
 import Place from "../component/places/Place";
 import FAQ from "../component/faq/FAQ";
-import {AsyncStorage, Dimensions, ScrollView, Text, View} from "react-native";
-import React, {useEffect} from "react";
-import eventStack from "./EventsStack";
-import authenticationStack from "./AuthStack";
+import Social from '../component/social'
+import artistStack from './ArtistStack'
+import Rencontre from "../component/Rencontre";
+import { TouchableNativeFeedback } from "react-native-gesture-handler";
+import { createStackNavigator } from "react-navigation-stack";
 
 const DrawerContent = (props) => {
     return <ScrollView>
@@ -20,6 +25,12 @@ const DrawerContent = (props) => {
                 <Text style={{fontSize: 15, fontWeight: 'bold'}}>John Doe</Text>
             </View>
             <DrawerItems {...props} />
+            <TouchableNativeFeedback onPress = { () => props.navigation.navigate('Logout') } >
+                <View style ={{flexDirection : 'row', marginHorizontal : 18}}>
+                    <Icon name='log-out' type="feather" color = '#354f52'/>
+                    <Text style={{fontWeight : 'bold', marginLeft: 30, marginTop : 2}}>Se déconnecter</Text>
+                </View>
+            </TouchableNativeFeedback>
         </View>
     </ScrollView>
 }
@@ -31,7 +42,16 @@ const drawernavigation = createDrawerNavigator({
         navigationOptions: {
             drawerLabel: 'Evenement',
             drawerIcon: ({tintColor}) => (
-                <Icon name='bars' type="font-awesome" color={tintColor}/>
+                <Icon name='music' type="feather" color={tintColor}/>
+            )
+        }
+    },
+    'Artists': {
+        screen: artistStack,
+        navigationOptions: {
+            drawerLabel: 'Artists',
+            drawerIcon: ({tintColor}) => (
+                <Icon name='user' type="feather" color={tintColor}/>
             )
         }
     },
@@ -40,7 +60,76 @@ const drawernavigation = createDrawerNavigator({
         navigationOptions: {
             drawerLabel: 'Places',
             drawerIcon: ({tintColor}) => (
-                <Icon name='map-marker' type="font-awesome" color={tintColor}/>
+                <Icon name='map-pin' type="feather" color={tintColor}/>
+            )
+        }
+    },
+    Rencontre: {
+        screen: Rencontre,
+        navigationOptions: {
+            drawerLabel: 'Rencontres',
+            drawerIcon: ({tintColor}) => (
+                <Icon name='user-plus' type="feather" color={tintColor}/>
+            )
+        }
+    },
+    Partner: {
+        screen: createStackNavigator({
+            Partner: {
+                screen: Partner,
+                navigationOptions: ({navigation}) => ({
+                    title: 'Partenaires',
+                    headerStyle: {
+                        backgroundColor: '#7bdfa0',
+                        borderBottomWidth: 2,
+                        borderBottomColor: '#7bdfa0'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleAlign: 'center',
+                    headerRight: () => (
+                        <Icon
+                            onPress={() => navigation.openDrawer()}
+                            name="bars" type="font-awesome" containerStyle={{marginHorizontal: 15}}
+                            color="#fff"
+                        />
+                    ),
+                }),
+            }
+        }),
+        navigationOptions: {
+            drawerLabel: 'Partenaires',
+            drawerIcon: ({tintColor}) => (
+                <Icon name='users' type="feather" color={tintColor}/>
+            )
+        }
+    },
+    Social: {
+        screen: createStackNavigator({
+            Social: {
+                screen: Social,
+                navigationOptions: ({navigation}) => ({
+                    title: 'Réseaux sociaux',
+                    headerStyle: {
+                        backgroundColor: '#7bdfa0',
+                        borderBottomWidth: 2,
+                        borderBottomColor: '#7bdfa0'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleAlign: 'center',
+                    headerRight: () => (
+                        <Icon
+                            onPress={() => navigation.openDrawer()}
+                            name="bars" type="font-awesome" containerStyle={{marginHorizontal: 15}}
+                            color="#fff"
+                        />
+                    ),
+                }),
+            }
+        }),
+        navigationOptions: {
+            drawerLabel: 'Réseaux sociaux',
+            drawerIcon: ({tintColor}) => (
+                <Icon name='share-2' type="feather" color={tintColor}/>
             )
         }
     },
@@ -49,7 +138,7 @@ const drawernavigation = createDrawerNavigator({
         navigationOptions: {
             drawerLabel: 'Qusetion Reponse',
             drawerIcon: ({tintColor}) => (
-                <Icon name='align-left' type="font-awesome" color={tintColor}/>
+                <Icon name='help-circle' type="feather" color={tintColor}/>
             )
         }
     }

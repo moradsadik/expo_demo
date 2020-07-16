@@ -2,6 +2,14 @@ import React, {PureComponent} from "react";
 import {Dimensions, View} from "react-native";
 import MapView, {Marker} from "react-native-maps";
 import {Icon} from "react-native-elements";
+import axios from "axios";
+
+const API = 'https://event.sadiksoumia.com/api/';
+const PLACES = `${API}places`;
+
+const http = axios.create({
+    headers: {'Accept': 'application/json'}
+});
 
 export default class Place extends PureComponent {
 
@@ -9,47 +17,38 @@ export default class Place extends PureComponent {
         super(props)
         this.state = {
             showMenu: false,
-            places: [
-                { name: 'place 1', photos: ['https://loremflickr.com/320/240/coffee', 'https://loremflickr.com/320/240/nespresso', 'https://loremflickr.com/320/240/cappuccino'], rating: 4, categorie: 'coffee', latitude: 48.891015, longitude: 2.352073 },
-                { name: 'place 2', rating: 3, categorie: 'carburants', latitude: 48.881060, longitude: 2.362073 },
-                { name: 'place 3', rating: 4, categorie: 'hotels', latitude: 48.871090, longitude: 2.372073 },
-                { name: 'place 4', rating: 4, categorie: 'restaurants', latitude: 48.861030, longitude: 2.382073 },
-                { name: 'place 5', rating: 3, categorie: 'parkings', latitude: 48.891070, longitude: 2.392073 },
-                { name: 'place 6', rating: 3, categorie: 'hospitals', latitude: 48.901082, longitude: 2.402073 }
-            ],
-            filtred: [],
-            categories: [
-                { name: 'coffee', icon: 'coffee', color: '' },
-                { name: 'carburants', icon: 'shopping-basket', color: '' },
-                { name: 'hotels', icon: 'hotel', color: '' },
-                { name: 'restaurants', icon: 'cutlery', color: '' },
-                { name: 'parkings', icon: 'car', color: '' },
-                { name: 'hospitals', icon: 'hospital-o', color: '' },
-                { name: 'all', icon: 'bars', color: '' }
-            ]
+            places: [],
+            filtred: []
         }
     }
 
     componentDidMount() {
-        this.setState({ filtred: [...this.state.places] })
+        http.get(PLACES)
+            .then(response => {
+                let places = response.data
+                let filtred = [...places]
+                this.setState({ places, filtred })
+            })
+            .catch(error => { console.log(error) })
     }
+
 
     show = (categorie) => {
         let places = [...this.state.places]
         let filtred = places
         if (categorie !== 'all') {
-            filtred = places.filter(p => p.categorie === categorie);
+            filtred = places.filter(p => p.type.toLowerCase() === categorie);
         }
 
         this.setState({ filtred, showMenu: true });
 
     }
 
-    navigateToPlace = (place) => {
+    navigateToPlace = (latitude, longitude ) => {
         console.log(place)
         this._map.animateToRegion({
-            latitude: place.latitude,
-            longitude: place.longitude,
+            latitude: latitude,
+            longitude: longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
         })
@@ -58,24 +57,26 @@ export default class Place extends PureComponent {
     render = () => {
 
         const { categories, showMenu, filtred } = this.state
-        const { width, height } = Dimensions.get('window');
+        const {navigation} = this.props;
+        let initialLocation = {
+            latitude: 48.76696707446949,
+            longitude: 2.340671207171585,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+        }
 
         return <View style={{ flex: 1 }}>
 
-            <MapView ref={(map) => this._map = map} style={{ flex: 1 }}
-                     showsUserLocation
-                     loadingEnabled
-                     initialRegion={{
-                         latitude: 48.871090,
-                         longitude: 2.372073,
-                         latitudeDelta: 0.0922,
-                         longitudeDelta: 0.0421,
-                     }}
-            >
+            <MapView ref={(map) => this._map = map} style={{ flex: 1 }} 
+                     showsUserLocation maxZoomLevel={1000}
+                     loadingEnabled 
+                     initialRegion={initialLocation}   >
                 {
-                    this.state.filtred.map((p, i) => {
+                    filtred.map((p, i) => {
+                        let latitude  = Number(p.latLng.split(',')[0]);
+                        let longitude = Number(p.latLng.split(',')[1]);;
                         return <Marker key={i}
-                                       coordinate={{ latitude: p.latitude, longitude: p.longitude }}
+                                       coordinate={{ latitude, longitude }}
                                        title={p.name}
                         />
                     })
@@ -83,9 +84,15 @@ export default class Place extends PureComponent {
             </MapView>
 
             <View style={{ position: 'absolute', width: 'auto', height: 'auto', top: 30, left: 5 }}>
-                <Icon reverse name={showMenu ? 'times' : 'bars'} type='font-awesome'
+                <Icon reverse name={showMenu ? 'x' : 'map-pin'} type='feather'
                       color='#fff' size={20} iconStyle={{ color: '#000' }}
                       onPress={() => { this.setState({ showMenu: !showMenu }) }} />
+            </View>
+
+            <View style={{ position: 'absolute', width: 'auto', height: 'auto', top: 30, right: 5 }}>
+                <Icon reverse name='menu' type='feather'
+                      color='#fff' size={20} iconStyle={{ color: '#000' }}
+                      onPress={() => navigation.openDrawer()}  />
             </View>
 
             {showMenu &&
@@ -99,24 +106,25 @@ export default class Place extends PureComponent {
 
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
                         <Icon reverse name='coffee' type='font-awesome' color='#0077b6'
-                              onPress={() => this.show('coffee')} />
-                        <Icon reverse name='hotel' type='font-awesome' color='#e71d36'
-                              onPress={() => this.show('hotel')} />
-                        <Icon reverse name='shopping-basket' type='font-awesome' color='#ffbe0b'
-                              onPress={() => this.show('shop')} />
-                        <Icon reverse name='institution' type='font-awesome' color='#ffadad'
-                              onPress={() => this.show('shop')} />
+                              onPress={() => this.show('cafe')} />
+                        <Icon reverse name='male-female' type='foundation' color='#e71d36'
+                              onPress={() => this.show('toilette')} />
+                        <Icon reverse name='shopping-cart' type='feather' color='#ffbe0b'
+                              onPress={() => this.show('boutique')} />
+                        <Icon reverse name='car' type='font-awesome' color='#ffadad'
+                              onPress={() => this.show('parking')} />
                     </View>
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', }}>
-                        <Icon reverse name='hospital-o' type='font-awesome' color='#fb5607'
-                              onPress={() => this.show('hospital')} />
-                        <Icon reverse name='car' type='font-awesome' color='#ff006e'
-                              onPress={() => this.show('bus')} />
-                        <Icon reverse name='cutlery' type='font-awesome' color='#8338ec'
-                              onPress={() => this.show('all')} />
+                        <Icon reverse name='beer' type='font-awesome' color='#fb5607'
+                              onPress={() => this.show('buvette')} />
+                        <Icon reverse name='cutlery' type='font-awesome' color='#197278'
+                              onPress={() => this.show('restaurant')} />
                         <Icon reverse name='wheelchair' type='font-awesome' color='#197278'
+                              onPress={() => this.show('passage')} />
+                        <Icon reverse name='bars' type='font-awesome' color='#8338ec'
                               onPress={() => this.show('all')} />
                     </View>
+
                 </View>
                 <View style={{ position: 'absolute', width: 'auto', height: 'auto', bottom: 138, right: 7, zIndex: 9999 }}>
                     <Icon reverse name='times' type='font-awesome' color="#f00" size={11}

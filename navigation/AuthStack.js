@@ -3,6 +3,7 @@ import Login from "../component/authentifications/Login";
 import {Icon} from "react-native-elements";
 import Inscription from "../component/authentifications/Inscription";
 import React from "react";
+import Logout from "../component/authentifications/Logout";
 
 const authenticationStack = createStackNavigator({
     Login: {
@@ -10,6 +11,16 @@ const authenticationStack = createStackNavigator({
         navigationOptions: {
             headerShown: false,
             drawerLabel: 'Login',
+            drawerIcon: ({tintColor}) => (
+                <Icon name='user' type="font-awesome" color={tintColor}/>
+            )
+        }
+    },
+    Logout: {
+        screen: Logout,
+        navigationOptions: {
+            headerShown: false,
+            drawerLabel: 'Logout',
             drawerIcon: ({tintColor}) => (
                 <Icon name='user' type="font-awesome" color={tintColor}/>
             )

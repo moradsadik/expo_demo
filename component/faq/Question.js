@@ -18,13 +18,13 @@ export default class Question extends React.Component {
                     <Text style={{color:'#1563a7',
                         fontSize: 18,fontWeight: "bold",
                         paddingVertical:15, paddingHorizontal:10}}>Q.</Text>
-                    <Text style={{flex:1, paddingTop:17, fontSize: 16}}>{item.title} ?</Text>
+                    <Text style={{flex:1, paddingTop:17, fontSize: 16}}>{item.question} ?</Text>
                 </View>
             </TouchableWithoutFeedback>
             {open &&<View style={{flex:1, flexDirection: "row", marginTop: 5}}>
                 <Text style={{color:'#1563a7',marginLeft:12,
                     fontSize: 18,fontWeight: "bold"}}>R.</Text>
-                <Text style={{flex:1,paddingHorizontal:15,color:'#6f6f6f', fontSize:15, flexWrap:"wrap"}} >{item.data}</Text>
+                <Text style={{flex:1,paddingHorizontal:15,color:'#6f6f6f', fontSize:15, flexWrap:"wrap"}} >{item.answer}</Text>
             </View>}
         </View>;
     }

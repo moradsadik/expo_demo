@@ -1,7 +1,13 @@
 import React, {Component} from "react";
-import {AsyncStorage, Text, TextInput, View} from "react-native";
+import {Text, TextInput, View, ActivityIndicator} from "react-native";
 import {Avatar, Button} from "react-native-elements";
 import {TouchableNativeFeedback} from "react-native-gesture-handler";
+import axios from "axios";
+import { setToken } from "../../service/storage";
+
+const SUCCESS = '#2b9348';
+const ERROR = '#f00';
+const LOGIN = 'https://event.sadiksoumia.com/api/login';
 
 export default class Login extends Component{
 
@@ -10,35 +16,48 @@ export default class Login extends Component{
         this.state = {
             username : '',
             password : '',
-            error : null
+            message : {color:null, data:null},
+            loading : false
         }
     }
 
     componentDidMount() {
-       // let token = await AsyncStorage.getItem("token");
-        /*if(token && token === true) {
-            this.props.navigation.navigate('Evenement')
-        }*/
     }
 
     login  = () => {
         const {navigation} = this.props;
         let {username, password} = this.state;
 
+        this.setState({loading : true})
+
         if(!username || !password){
-            this.setState({error : 'Les champs doit etre remplit 🙏'})
+            this.setState({loading:false,message : {color:ERROR, data : 'Les champs doit etre remplit 🙏'}})
             return;
         }
 
-        if(username === 'admin' && password ==='admin'){
+        axios.post(LOGIN, {email: username, password})
+        .then(response => {
+            let token = response.data.token;
+            setToken(token)
+            let message = {color : SUCCESS, data : `👍 successful login 😊.`}
+            this.setState({message, loading : false})
             navigation.navigate('Evenement');
-        } else {
-            this.setState({error: '😡 verifier login ou password'})
-        }
+        })
+        .catch(e => {
+            let error = e.response.data.code + " : " + e.response.data.message;
+            let message = {color : ERROR, data : `😡 login ou password incorrect` }
+            this.setState({message, loading:false})
+        })
     }
 
     render(){
         const {navigation} = this.props;
+
+        if(this.state.loading){
+            return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}  >
+                <ActivityIndicator size='large' color="#7bdfa0" />
+            </View>
+        }
 
         return <View style={{flex:1, flexDirection:'column',justifyContent:'center',marginHorizontal:20}}>
 
@@ -49,7 +68,7 @@ export default class Login extends Component{
             </View>
 
             <TextInput
-                placeholder = 'username'
+                placeholder = 'email'
                 placeholderTextColor = "#463f3a"
                 id = "username"
                 value={this.state.username}
@@ -85,8 +104,8 @@ export default class Login extends Component{
             </View>
 
             {
-                this.state.error &&  <View style={{marginTop:10}}>
-                    <Text style={{color : '#f00', fontSize: 15, textAlign:"justify"}}> {this.state.error}</Text>
+                this.state.message &&  <View style={{marginTop:10}}>
+                    <Text style={{color : this.state.message.color, fontSize: 15, textAlign:"justify"}}> {this.state.message.data}</Text>
                 </View>
             }
 
