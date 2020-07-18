@@ -1,14 +1,8 @@
 import React, { Component } from "react";
 import {View, Text,ActivityIndicator, FlatList} from "react-native";
 import { ListItem } from "react-native-elements";
-import axios from "axios";
+import {http,ARTISTS, AVATAR} from '../../service/axios'
 
-const ARTISTS = 'https://event.sadiksoumia.com/api/artists';
-const AVATAR  = 'https://event.sadiksoumia.com/uploads/images/artists/';
-
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
 
 export default class Artist extends Component{
 

@@ -1,14 +1,8 @@
 import React,{Component} from "react";
 import {Text, View,FlatList, ActivityIndicator} from "react-native";
 import { ListItem, Avatar } from "react-native-elements";
-import axios from "axios";
+import {http,PARTNERS, PAVATAR} from '../service/axios'
 
-const PARTNERS = 'https://event.sadiksoumia.com/api/partners';
-const AVATAR = 'https://event.sadiksoumia.com/uploads/images/partner/';
-
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
 export default class Partner extends Component{
     constructor(props){
         super(props)
@@ -42,7 +36,7 @@ export default class Partner extends Component{
                 renderItem={({ item }) =>  <ListItem
                         onPress = {() => {}}
                         key={item.id}
-                        leftAvatar={<Avatar rounded size="large"source={{ uri: AVATAR+(item.logo) }} />}
+                        leftAvatar={<Avatar rounded size="large"source={{ uri: PAVATAR+(item.logo) }} />}
                         title = {item.name}
                         subtitle = {item.service}
                         bottomDivider  

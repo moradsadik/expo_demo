@@ -1,20 +1,10 @@
 import React, {PureComponent} from "react";
-import moment from "moment";
-import {ActivityIndicator, AsyncStorage, FlatList, View, Text} from "react-native";
+import {ActivityIndicator, FlatList, View} from "react-native";
 import {ButtonGroup} from "react-native-elements";
 import EventItem from "./EventItem";
-import {SafeAreaView} from "react-navigation";
-import axios from "axios";
+import {http,CATEGORIES} from '../../service/axios'
 
-const API = 'https://event.sadiksoumia.com/api/';
-const CATEGORIES = `${API}categories`;
 const JOUR1 = 'jour-1';
-
-
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
-
 export default class Events extends PureComponent {
     constructor(props) {
         //moment.locale('fr');

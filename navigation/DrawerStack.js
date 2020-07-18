@@ -1,7 +1,7 @@
 import React from "react";
 import {createDrawerNavigator, DrawerItems} from "react-navigation-drawer";
 import {Avatar, Icon} from "react-native-elements";
-import {Dimensions, ScrollView, Text, View, Button, AsyncStorage} from "react-native";
+import {Dimensions, ScrollView, Text, View, ImageBackground} from "react-native";
 import eventStack from "./EventsStack";
 import Partner from "../component/Partner";
 import Place from "../component/places/Place";
@@ -11,19 +11,26 @@ import artistStack from './ArtistStack'
 import Rencontre from "../component/Rencontre";
 import { TouchableNativeFeedback } from "react-native-gesture-handler";
 import { createStackNavigator } from "react-navigation-stack";
+import { get } from "../service/storage";
 
 const DrawerContent = (props) => {
+
     return <ScrollView>
         <View style={{flex: 1}}>
-            <View style={{
-                flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#95d5b2',
-                padding: 10, borderBottomColor: '#52b788', borderBottomWidth: 1
-            }}>
-                <Avatar rounded size="xlarge"
-                        containerStyle={{}}
-                        source={{uri: 'https://randomuser.me/api/portraits/men/75.jpg'}}/>
-                <Text style={{fontSize: 15, fontWeight: 'bold'}}>John Doe</Text>
-            </View>
+            <ImageBackground style={{ flex: 1, 
+                                justifyContent: "center", minHeight: 200 }}
+                                source={require('../assets/images/drawer.jpeg')}>
+                <View style={{flex: 1, position: 'absolute', bottom : 0, left : 15, width:80}}>
+                    <Icon 
+                      containerStyle={{borderRadius:100, padding: 10, 
+                                       borderWidth:5, borderColor:'#fff'}} 
+                      iconStyle={{fontSize:50}} 
+                      color="#fff" name="user" type='feather' 
+                    />
+                    <Text style={{fontSize: 15, fontWeight: 'bold', textAlign: 'center',
+                                  color:'#fff', justifyContent: 'center'}}></Text>
+                </View>
+            </ImageBackground>
             <DrawerItems {...props} />
             <TouchableNativeFeedback onPress = { () => props.navigation.navigate('Logout') } >
                 <View style ={{flexDirection : 'row', marginHorizontal : 18}}>
@@ -65,7 +72,28 @@ const drawernavigation = createDrawerNavigator({
         }
     },
     Rencontre: {
-        screen: Rencontre,
+        screen: createStackNavigator({
+            Rencontre: {
+                screen: Rencontre,
+                navigationOptions: ({navigation}) => ({
+                    title: 'Rencontres',
+                    headerStyle: {
+                        backgroundColor: '#7bdfa0',
+                        borderBottomWidth: 2,
+                        borderBottomColor: '#7bdfa0'
+                    },
+                    headerTintColor: '#fff',
+                    headerTitleAlign: 'center',
+                    headerRight: () => (
+                        <Icon
+                            onPress={() => navigation.openDrawer()}
+                            name="bars" type="font-awesome" containerStyle={{marginHorizontal: 15}}
+                            color="#fff"
+                        />
+                    ),
+                }),
+            }
+        }),
         navigationOptions: {
             drawerLabel: 'Rencontres',
             drawerIcon: ({tintColor}) => (

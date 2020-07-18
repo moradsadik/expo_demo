@@ -1,12 +1,10 @@
 import React,{Component} from "react";
-import {Text, View,FlatList, ActivityIndicator} from "react-native";
+import {View,FlatList, ActivityIndicator} from "react-native";
 import { ListItem, Icon } from "react-native-elements";
-import axios from "axios";
+import {http,SOCIALS} from '../service/axios'
 
-const SOCIALS = 'https://event.sadiksoumia.com/api/socials';
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
+
+
 export default class Social extends Component{
     
     constructor(props){
@@ -34,7 +32,7 @@ export default class Social extends Component{
 
     color = (type) => {
         if(type === 'facebook') return "#3b5999"
-        else if(type === 'instagram') return "#247ba0"
+        else if(type === 'instagram') return "#bc2a8d"
         else if(type === 'twitter') return "#00aced"
         else if(type === 'youtube') return "#bb0000"
     }

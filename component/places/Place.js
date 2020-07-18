@@ -3,13 +3,8 @@ import {Dimensions, View} from "react-native";
 import MapView, {Marker} from "react-native-maps";
 import {Icon} from "react-native-elements";
 import axios from "axios";
+import {http,PLACES} from '../../service/axios'
 
-const API = 'https://event.sadiksoumia.com/api/';
-const PLACES = `${API}places`;
-
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
 
 export default class Place extends PureComponent {
 

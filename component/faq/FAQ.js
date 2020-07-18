@@ -2,13 +2,7 @@ import {FlatList, ScrollView, Text, TouchableOpacity, View, ActivityIndicator} f
 import React, {Component} from "react";
 import {Icon} from "react-native-elements";
 import Question from './Question'
-import axios from "axios";
-
-
-const FAQS = `https://event.sadiksoumia.com/api/faqs`;
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
+import {http,FAQS} from '../../service/axios'
 
 class FAQ extends Component {
 

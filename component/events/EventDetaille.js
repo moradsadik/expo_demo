@@ -2,17 +2,9 @@ import React, {PureComponent} from "react";
 import {ActivityIndicator, ImageBackground, ScrollView, Text, View, WebView} from "react-native";
 import {Avatar, Icon} from "react-native-elements";
 import MapView, {Marker} from "react-native-maps";
-import axios from "axios";
+import {http,EVENTSID, AVATAR} from '../../service/axios'
 import moment from "moment";
 
-
-const API = 'https://event.sadiksoumia.com/api/';
-const EVENTS = `${API}events/`;
-const AVATAR = 'https://event.sadiksoumia.com/uploads/images/artists/';
-
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
 export default class EventDetaille extends PureComponent {
     static navigationOptions = {
         title: 'Detaille Evenement',
@@ -28,7 +20,7 @@ export default class EventDetaille extends PureComponent {
 
         const { navigation } = this.props;
         let id = navigation.getParam('id');
-        http.get(EVENTS + id)
+        http.get(EVENTSID + id)
             .then(response => {
                 let event = response.data;
                 this.setState({ event, loading : false })

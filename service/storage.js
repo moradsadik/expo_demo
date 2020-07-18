@@ -18,4 +18,21 @@ const setToken = async (token) =>{
     }
 }
 
-export {setToken, getToken}
+const get = async (key)=>{
+    try {
+        let value = await AsyncStorage.getItem(key);
+        return new Promise((resolve, reject) => {resolve(value)});
+    } catch (error) {
+        console.log('GET AsyncStorage error: ' + error.message);
+    }
+}
+
+const set = async (key, value) =>{
+    try {
+        await AsyncStorage.setItem(key, value);
+    } catch (error) {
+        console.log('SET AsyncStorage error: ' + error.message);
+    }
+}
+
+export {get, set, setToken, getToken}

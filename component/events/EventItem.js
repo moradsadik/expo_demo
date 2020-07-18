@@ -2,8 +2,8 @@ import React, {PureComponent} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {Avatar, Icon} from "react-native-elements";
 import moment from "moment";
+import {AVATAR} from '../../service/axios'
 
-const AVATAR = 'https://event.sadiksoumia.com/uploads/images/artists/';
 export default class EventItem extends PureComponent {
 
     constructor(props) { super(props) }

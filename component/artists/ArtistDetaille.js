@@ -4,45 +4,84 @@ import axios from "axios";
 import moment from "moment";
 import { Avatar, Icon, Button } from "react-native-elements";
 import { TouchableNativeFeedback } from "react-native-gesture-handler";
-
-
-const API = 'https://event.sadiksoumia.com/api/';
-const ARTISTS = `${API}artists/`;
-const AVATAR = 'https://event.sadiksoumia.com/uploads/images/artists/';
-
-
-const http = axios.create({
-    headers: {'Accept': 'application/json'}
-});
-
+import {http,ARTISTSID,RENCONTRE, AVATAR} from '../../service/axios'
+import { getToken } from "../../service/storage";
+const SUCCESS = '#2b9348';
+const ERROR = '#f00';
 export default class ArtistDetaille extends Component{
 
     constructor(){
         super();
         this.state = {
             artist : {},
-            loading: true
+            token : null,
+            loading: true,
+            planifiaction : null,
+            message : {color:null, data:null},
         }
     }
 
     componentDidMount(){
         const { navigation } = this.props;
         let id = navigation.getParam('id');
-        http.get(ARTISTS + id)
+        http.get(ARTISTSID + id)
             .then(response => {
                 let artist = response.data;
                 this.setState({ artist, loading : false })
             })
             .catch(error => { console.log(error) })
+
+
+        getToken().then( token => {
+            if(token){
+                this.setState({token})
+            }
+        })
     }
 
+    planifier = () => {
+        const { token, artist } = this.state;
+        if(token){
+            console.log(token)
+        }
+        this.setState({ loading : true, planifiaction : 'Votre demande est en cours ...' })
+        axios.post(
+            RENCONTRE, 
+            {artist : `/api/artists/${artist.id}`}, 
+            {
+                headers: { 
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json', 
+                    'Authorization': `Bearer ${token}` 
+                }
+            }
+        ).then(response => {
+            console.log('success')
+            alert('Success',`👍 Demande enregistré en attente de validation 😊.`);
+            this.setState({planifiaction : null,message : null, loading : false})
+        
+        }).catch(error => { 
+            alert('Error',`un probleme servenue lors enregistrement demande 🙏`);
+            this.setState({loading:false,planifiaction : null, message : null})
+        })
+    }
+
+    alert = (title, msg) => {
+        Alert.alert(
+            title,
+            msg,
+            [{text: "Cancel",onPress: () => {}},{ text: "OK", onPress: () => {} }],
+            { cancelable: false }
+        );
+    }
     render = () =>{
 
-        let {artist, loading} = this.state;
+        let {planifiaction, artist, loading, message} = this.state;
         const { navigation } = this.props;
 
         if(loading){
             return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}  >
+                {planifiaction && <Text style={{marginBottom : 10, color : '#52796f'}}>{planifiaction}</Text>}
                 <ActivityIndicator size='large' color="#7bdfa0" />
             </View>
         }
@@ -76,7 +115,12 @@ export default class ArtistDetaille extends Component{
                 }
             </View>
             <View style={{position:'absolute', bottom:10, left:5, width : Dimensions.get('window').width-10, height:'auto', paddingHorizontal: 10, marginTop: 20}}>
-                <Button title="Planifier une rencontre" />
+                {
+                    message &&  <View style={{marginTop:10}}>
+                        <Text style={{color : message.color, fontSize: 15, textAlign:"justify"}}> {message.data}</Text>
+                    </View>
+                }
+                <Button onPress = {this.planifier} title="Planifier une rencontre" />
             </View>
         </View>
     }
