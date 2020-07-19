@@ -6,8 +6,11 @@ import { Avatar, Icon, Button } from "react-native-elements";
 import { TouchableNativeFeedback } from "react-native-gesture-handler";
 import {http,ARTISTSID,RENCONTRE, AVATAR} from '../../service/axios'
 import { getToken } from "../../service/storage";
+import { alert } from "../../service/utils";
+
 const SUCCESS = '#2b9348';
 const ERROR = '#f00';
+
 export default class ArtistDetaille extends Component{
 
     constructor(){
@@ -64,15 +67,6 @@ export default class ArtistDetaille extends Component{
             alert('Error',`un probleme servenue lors enregistrement demande 🙏`);
             this.setState({loading:false,planifiaction : null, message : null})
         })
-    }
-
-    alert = (title, msg) => {
-        Alert.alert(
-            title,
-            msg,
-            [{text: "Cancel",onPress: () => {}},{ text: "OK", onPress: () => {} }],
-            { cancelable: false }
-        );
     }
     render = () =>{
 

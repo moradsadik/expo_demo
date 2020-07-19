@@ -4,6 +4,7 @@ import {Button, Icon} from "react-native-elements";
 import {TouchableNativeFeedback} from "react-native-gesture-handler";
 import { setToken, set } from "../../service/storage";
 import {http,LOGIN} from '../../service/axios'
+
 const SUCCESS = '#2b9348';
 const ERROR = '#f00';
 
@@ -37,7 +38,6 @@ export default class Login extends Component{
         .then(response => {
             let token = response.data.token;
             setToken(token)
-
             let message = {color : SUCCESS, data : `👍 successful login 😊.`}
             this.setState({message, loading : false})
             set("email",  email)

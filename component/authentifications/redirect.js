@@ -6,12 +6,13 @@ export default class Redirect extends Component{
 
     componentDidMount(){
         const {navigation} = this.props; 
-
         getToken().then( token => {
             if(token == undefined || token === null || token === ''){
                 navigation.navigate('Login')
             }
-            else{ navigation.navigate('Evenement') }
+            else{ 
+                navigation.navigate('Evenement') 
+            }
         })
     }
     render = () =>{
