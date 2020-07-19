@@ -173,6 +173,7 @@ const drawernavigation = createDrawerNavigator({
 }, {
     contentComponent: DrawerContent,
     drawerWidth: Dimensions.get('window').width * 0.85,
+    unmountInactiveRoutes : true,
     hideStatusBar: true,
     contentOptions: {
         activeTintColor: '#f8961e',
