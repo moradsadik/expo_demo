@@ -8,10 +8,9 @@ import Place from "../component/places/Place";
 import FAQ from "../component/faq/FAQ";
 import Social from '../component/social'
 import artistStack from './ArtistStack'
-import Rencontre from "../component/Rencontre";
 import { TouchableNativeFeedback } from "react-native-gesture-handler";
 import { createStackNavigator } from "react-navigation-stack";
-import { get } from "../service/storage";
+import rencontreStack from "./RencontreStack";
 
 const DrawerContent = (props) => {
 
@@ -72,28 +71,7 @@ const drawernavigation = createDrawerNavigator({
         }
     },
     Rencontre: {
-        screen: createStackNavigator({
-            Rencontre: {
-                screen: Rencontre,
-                navigationOptions: ({navigation}) => ({
-                    title: 'Rencontres',
-                    headerStyle: {
-                        backgroundColor: '#7bdfa0',
-                        borderBottomWidth: 2,
-                        borderBottomColor: '#7bdfa0'
-                    },
-                    headerTintColor: '#fff',
-                    headerTitleAlign: 'center',
-                    headerRight: () => (
-                        <Icon
-                            onPress={() => navigation.openDrawer()}
-                            name="bars" type="font-awesome" containerStyle={{marginHorizontal: 15}}
-                            color="#fff"
-                        />
-                    ),
-                }),
-            }
-        }),
+        screen: rencontreStack,
         navigationOptions: {
             drawerLabel: 'Rencontres',
             drawerIcon: ({tintColor}) => (

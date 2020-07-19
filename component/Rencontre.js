@@ -1,9 +1,9 @@
 import React,{Component} from "react";
-import {Text, View, ActivityIndicator, FlatList} from "react-native";
+import {Text, View, ActivityIndicator, FlatList, TouchableNativeFeedback} from "react-native";
 import {http,USERS,AVATAR} from '../service/axios'
 import { ListItem, Avatar } from "react-native-elements";
 import { getToken } from "../service/storage";
-import { tokenToJson, isEmpty } from "../service/utils";
+import { tokenToJson, isEmpty, alert } from "../service/utils";
 
 export default class Rencontre extends Component{
 
@@ -34,11 +34,19 @@ export default class Rencontre extends Component{
         
     }
 
-    
+    detaille = (item) => {
+        const { navigation } = this.props;
+        if(!item.latLng){
+            alert("Rencontre", "la rencontre n'a pas été encore approvue ")
+        }else {
+            navigation.navigate('RencontreDetaille', {item})
+        }
+
+    }
 
     render() {
-
         let {renconters, loading} = this.state;
+
         if(loading){
             return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}  >
                 <ActivityIndicator size='large' color="#7bdfa0" />
@@ -57,11 +65,16 @@ export default class Rencontre extends Component{
                 data={renconters}
                 keyExtractor={(item, index) => index+ ''}
                 renderItem={({ item }) =>  <ListItem
-                        onPress = {() => {}}
+                        onPress = {() => { this.detaille(item)}}
                         key={item.id}
                         leftAvatar={<Avatar rounded size="medium" source={{ uri: AVATAR+(item.artist.avatar) }} />}
                         title = {
-                            'Votre demande de rencontre avec '+ item.artist.name+' '+item.artist.prenom + ' '+( item.latLng ? ' a été approvue' : ' est en cours de traitement')
+                            <View style={{}}>
+                                <Text>Votre demande de rencontre avec {item.artist.name} {item.artist.prenom}</Text>
+                                <Text style={{fontWeight : 'bold'}}> 
+                                    {item.latLng ? ' a été approvue' : ' est en cours de traitement'}
+                                </Text>
+                            </View>
                         }
                         bottomDivider  
                     /> 

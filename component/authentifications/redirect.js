@@ -9,8 +9,7 @@ export default class Redirect extends Component{
         getToken().then( token => {
             if(token == undefined || token === null || token === ''){
                 navigation.navigate('Login')
-            }
-            else{ 
+            } else { 
                 navigation.navigate('Evenement') 
             }
         })

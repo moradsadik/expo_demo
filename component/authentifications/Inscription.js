@@ -81,7 +81,7 @@ export default class Inscription extends Component{
             
             <TextInput
                 placeholder = 'confirm password' 
-                value={this.state.email}
+                value={this.state.confirmPassword}
                 onChangeText={confirmPassword => this.setState({confirmPassword})}  
                 placeholderTextColor = "#463f3a"
                 style={{ height: 'auto', borderWidth:0,borderBottomWidth:1, borderBottomColor:'#463f3a',
